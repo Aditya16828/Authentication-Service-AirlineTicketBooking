@@ -23,6 +23,19 @@ class UserRepository{
             throw {error};
         }
     }
+
+    async getbyId(userId){
+        try {
+            const user = await User.findByPk(userId, {
+                attributes: ['email', 'password']
+            });
+            return user;
+        } catch (error) {
+            console.log("Error in fetching the user by id");
+            console.log(error);
+            throw {error};
+        }
+    }
 }
 
 module.exports = UserRepository;
