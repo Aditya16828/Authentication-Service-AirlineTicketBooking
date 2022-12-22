@@ -1,39 +1,53 @@
-const {User} = require('../models/index');
+const { User } = require("../models/index");
 
-class UserRepository{
-
-    async create(userData){
+class UserRepository {
+    async create(userData) {
         try {
             const user = await User.create(userData);
             return user;
         } catch (error) {
             console.log("Error in Repository layer");
             console.log(error);
-            throw {error};
+            throw { error };
         }
     }
 
-    async delete(userid){
+    async delete(userid) {
         try {
-            await User.destroy({where: {id: userid}});
+            await User.destroy({ where: { id: userid } });
             return true;
         } catch (error) {
             console.log("Error in Repository layer");
             console.log(error);
-            throw {error};
+            throw { error };
         }
     }
 
-    async getbyId(userId){
+    async getbyId(userId) {
         try {
             const user = await User.findByPk(userId, {
-                attributes: ['email', 'password']
+                attributes: ["email", "id"],
             });
             return user;
         } catch (error) {
             console.log("Error in fetching the user by id");
             console.log(error);
-            throw {error};
+            throw { error };
+        }
+    }
+
+    async getbyEmail(userEmail) {
+        try {
+            const user = await User.findOne({
+                where: {
+                    email: userEmail
+                },
+            });
+            return user;
+        } catch (error) {
+            console.log("Error in Repository layer, cannot find the email id");
+            console.log(error);
+            throw { error };
         }
     }
 }

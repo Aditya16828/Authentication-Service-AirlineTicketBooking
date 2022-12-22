@@ -42,4 +42,24 @@ const remove = async (req, res) => {
     }
 }
 
-module.exports = {create, remove};
+const signin = async (req, res) => {
+    try {
+        const response = await userservice.signIn(req.body.email, req.body.password);
+        return res.status(200).json({
+            data: response,
+            success: true,
+            message: "User signed in",
+            err: {}
+        })
+    } catch (error) {
+        console.log("Error in Controller");
+        res.sattus(500).json({
+            data: {},
+            success: false,
+            message: "Unable to signin Account",
+            err: error
+        });
+    }
+}
+
+module.exports = {create, remove, signin};

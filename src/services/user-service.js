@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const {UserRepository} = require('../repository/index');
-const {JWT_KEY} = require('../config/serverConfig')
+const {JWT_KEY} = require('../config/serverConfig');
 
 class UserService{
     constructor(){
@@ -32,6 +33,9 @@ class UserService{
 
     createToken(user){
         try {
+            /**
+             * user: {email, id}
+             */
             const token = jwt.sign(user, JWT_KEY, {expiresIn: '96h'});
             return token;
         } catch (error) {
@@ -47,6 +51,39 @@ class UserService{
             return response;
         } catch (error) {
             console.log("Error in verifying Token");
+            console.log(error);
+            throw {error};
+        }
+    }
+
+    checkPassword(userPassword, encryptedPassword){
+        try {
+            const response = bcrypt.compareSync(userPassword, encryptedPassword);
+            return response;
+        } catch (error) {
+            console.log("Error in Password Check");
+            console.log(error);
+            throw {error};
+        }
+    }
+
+    async signIn(email, password){
+        try {
+            const user = await this.userRepo.getbyEmail(email);
+            /**
+             * user: {id, email, password, createdAt, updatedAt}
+             */
+            const matchPassword = this.checkPassword(password, user.password);
+            
+            if(!matchPassword){
+                console.log("Incorrect password");
+                throw {error: "Incorrect password"};
+            }
+
+            const newtoken = this.createToken({email: user.email, id: user.id});
+            return newtoken;
+        } catch (error) {
+            console.log("Error in Service Layer, cannot get the user as per email id");
             console.log(error);
             throw {error};
         }
