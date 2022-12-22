@@ -88,6 +88,24 @@ class UserService{
             throw {error};
         }
     }
+
+    async AuthenticateUser(token){
+        try {
+            const response = verifyToken(token);
+            if(!response){
+                throw {error: "Not a valid token"};
+            }
+            const user = await this.userRepo.getbyId(response.id);
+            if(!user){
+                throw {error: "User not registerred to the corresponding token"}
+            }
+            return user.id;
+        } catch (error) {
+            console.log("Error in Service Layer, cannot get the user id as per token");
+            console.log(error);
+            throw {error};
+        }
+    }
 }
 
 module.exports = UserService;
