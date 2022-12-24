@@ -133,12 +133,25 @@ module.exports = {
   - _MANY-TO-MANY_ (Here): In the `user` and `role` model `.js` files, add the code snippet in the
 
   ```javascript
-  static associate(models)
+  static associate(models){
+
+  }
   ```
 
   | `user.js`                         | `role.js`                         |
   |-----------------------------------|-----------------------------------|
-  |                                   |
   |this.belongsToMany(models.Role, {  |this.belongsToMany(models.User, {  |
   |              through: 'UserRoles' |              through: 'UserRoles' |
   |          });                      |          });                      |
+
+- In `.env` file, add a property of `DB_SYNC = true` and in `index.js` add
+
+```javascript
+if(process.env.DB_SYNC){
+   db.sequelize.sync({alter: true});
+}
+```
+
+[Note: You can add/remove `DB_SYNC` when sync is required/not required, since being a heavy operation, every time server start will cause the snippet to be executed and may take a lot a time for large DBs]
+
+- **(Seeding)**
