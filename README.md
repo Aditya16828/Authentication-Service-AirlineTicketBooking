@@ -158,3 +158,18 @@ if(process.env.DB_SYNC){
   - Run the command `npx sequelize seed:generate --name <NAME_SEEDER_FILE>`, to create a seeder file. (Used to insert some values into DB Tables while server is started {used for development purposes}).
   - In the `./src/seeder/`, a file is created with name `xxxxxxxxxxxxxx-<NAME_SEEDER_FILE>.js`. Add values into the files as per the instructions in the comments.
   - Run `npx sequelize db:seed --seed <SEEDER_FILE_NAME>`, to seed the values added inside seeder file.
+
+## Encrypting Password
+
+**Discussed as per the `USER` Model used here**
+
+- Made use of the package [bcrypt](https://www.npmjs.com/package/bcrypt)
+- Import the package in `./src/models/user.js`, and add the snippet inside the class `User`.
+
+```javascript
+User.beforeCreate((user) => {
+        const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
+        const encryptedPassword = bcrypt.hashSync(user.password, salt);
+        user.password = encryptedPassword;
+    });
+```
