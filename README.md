@@ -84,3 +84,10 @@ module.exports = {
     "start": "npx nodemon src/index.js"
   }
 ```
+
+### Setting up DB
+
+- Databases required
+  - User
+  - Role
+  - User_roles
