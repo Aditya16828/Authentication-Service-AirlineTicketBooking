@@ -90,4 +90,24 @@ module.exports = {
 - Databases required
   - User
   - Role
-  - User_roles
+  - UserRoles
+
+- Design of the Databases
+
+  - **Users Table _(or User Model)_**
+
+    - id (created by sequelize automatically)
+    - email
+    - password
+    - createdAt (created by sequelize automatically)
+    - updatedAt (created by sequelize automatically)
+  
+  - **Roles Table _(or Role Model)_**
+
+    - id (created by sequelize automatically)
+    - name
+    - createdAt (created by sequelize automatically)
+    - updatedAt (created by sequelize automatically)
+  
+  - **UserRoles Table** : used as a `through` table to create _MANY-TO-MANY_ associations between tables `Users` and `Roles`.
+
