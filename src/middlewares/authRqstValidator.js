@@ -20,4 +20,17 @@ const validateUserSignup = (req, res, next) => {
     next();
 }
 
-module.exports = {validateUserSignup};
+const validateIsAdminrequest = (req, res, next) => {
+    if(!req.body.userId){
+        return res.status(400).json({
+            data: {},
+            success: false,
+            message: "Plz enter user id",
+            err: "user id missing!!!"
+        })
+    }
+
+    next();
+}
+
+module.exports = {validateUserSignup, validateIsAdminrequest};

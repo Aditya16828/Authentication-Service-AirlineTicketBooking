@@ -16,7 +16,7 @@ const create = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.sattus(500).json({
+        res.status(500).json({
             data: {},
             success: false,
             message: "Unable to create Account",
@@ -36,7 +36,7 @@ const remove = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.sattus(500).json({
+        res.status(500).json({
             data: {},
             success: false,
             message: "Unable to delete Account",
@@ -59,7 +59,7 @@ const signin = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.sattus(500).json({
+        res.status(500).json({
             data: {},
             success: false,
             message: "Unable to signin Account",
@@ -80,7 +80,7 @@ const isAuthenticated = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.sattus(500).json({
+        res.status(500).json({
             data: {},
             success: false,
             message: "Unable to Authenticate Account",
@@ -89,4 +89,24 @@ const isAuthenticated = async (req, res) => {
     }
 };
 
-module.exports = { create, remove, signin };
+const isAdmin = async (req, res) => {
+    try {
+        const response = await userservice.isAdmin(req.body.userId);
+        return res.status(200).json({
+            data: response,
+            err: {},
+            success: true,
+            message: "User is Admin"
+        })
+    } catch (error) {
+        console.log("Error in Controller");
+        res.status(500).json({
+            data: {},
+            success: false,
+            message: "Unable to Authenticate User as Admin",
+            err: error,
+        });
+    }
+};
+
+module.exports = { create, remove, signin, isAdmin };

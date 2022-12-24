@@ -5,6 +5,9 @@ const { PORT } = require("./config/serverConfig.js");
 const APIroutes = require("./routes/index");
 const { UserService } = require("./services/index");
 
+const db = require('./models/index');
+const {User, Role} = require('./models/index');
+
 const setupAndstartServer = async function () {
     const app = express();
 
@@ -15,17 +18,16 @@ const setupAndstartServer = async function () {
 
     app.listen(PORT, async () => {
         console.log("Server started at", PORT);
-		// const ur = new UserRepository();
-		// const response = await ur.getbyId(3);
-		// console.log(response.dataValues);
 
-		// const us = new UserService();
-		
-		// const newToken = await us.createToken({email: "aditya123@rediffmail.com", id: 3});
-		// console.log(newToken);
+		if(process.env.DB_SYNC){
+			db.sequelize.sync({alter: true});
+		}
 
-		// const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImFkaXR5YTEyM0ByZWRpZmZtYWlsLmNvbSIsImlkIjozLCJpYXQiOjE2NzE3Mzg3NTYsImV4cCI6MTY3MjA4NDM1Nn0.cRgBiVS3NSwhvFUJ7lEeR3QLUYJ30ZLXGTYTD2mKAZw';
-		// const response = await us.verifyToken(token);
+		// const user1 = await User.findByPk(4);
+		// const role1 = await Role.findByPk(1);
+		// user1.addRole(role1);
+
+		// const response = await user1.hasRole(role1);
 		// console.log(response);
 	});
 };
