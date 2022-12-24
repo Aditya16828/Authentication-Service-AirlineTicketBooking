@@ -139,8 +139,6 @@ module.exports = {
   | `user.js`                         | `role.js`                         |
   |-----------------------------------|-----------------------------------|
   |                                   |
-  |```javascript                      |```javascript
   |this.belongsToMany(models.Role, {  |this.belongsToMany(models.User, {  |
   |              through: 'UserRoles' |              through: 'UserRoles' |
   |          });                      |          });                      |
-  |```                                |```                                |
