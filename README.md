@@ -109,5 +109,37 @@ module.exports = {
     - createdAt (created by sequelize automatically)
     - updatedAt (created by sequelize automatically)
   
-  - **UserRoles Table** : used as a `through` table to create _MANY-TO-MANY_ associations between tables `Users` and `Roles`.
+  - **UserRoles Table** : used as a `through` - table to create _MANY-TO-MANY_ associations between tables `Users` and `Roles`.
 
+### Steps
+
+- To create a Database, run the command `npx sequelize db:create`. This will create the following folders in the folder in which the command was run.
+- Move those folders into the `./src/`. Hence, the `./src/` folder structure is
+  
+  - src/config
+  - src/controllers
+  - src/middlewares
+  - src/migrations
+  - src/models
+  - src/repository
+  - src/routes
+  - src/seeders
+  - src/services
+  - src/utils
+
+- Now inside `./src/`, run `npx sequelize model:generate --name <MODEL_NAME> --attributes <A1>:<TYPE> <A2>:<TYPE> ...`.
+- In the `./src/models/` and `./src/migrations/`, 2 files are created with same name as that of the model name. Make the necessary changes.
+- **(For Associations)**
+  - _MANY-TO-MANY_ (Here): In the `user` and `role` model `.js` files, add the code snippet in the
+
+  ```javascript
+  static associate(models)
+  ```
+
+  | `user.js`                         | `role.js`                         |
+  |-----------------------------------|-----------------------------------|
+  |                                   |
+  |this.belongsToMany(models.Role, {  |this.belongsToMany(models.User, {  |
+  |              through: 'UserRoles' |              through: 'UserRoles' |
+  |          });                      |          });                      |
+  |                                   |                                   |
