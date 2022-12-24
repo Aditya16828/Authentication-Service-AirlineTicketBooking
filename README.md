@@ -20,6 +20,8 @@
 
 ## _STEPS_ for setting up the the Full Authorisation and Authentication Service
 
+### Setting up basic server
+
 - Create the folders:
   - src/config
   - src/controllers
@@ -73,4 +75,12 @@ dotenv.config();
 module.exports = {
     PORT: process.env.PORT,
 };
+```
+
+- To start the server by running `npm start`, go to the `package.json` file and replace the `"scripts"` key with
+
+```json
+"scripts": {
+    "start": "npx nodemon src/index.js"
+  }
 ```
