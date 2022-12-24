@@ -64,7 +64,7 @@ setupAndstartServer();
 - In `.env` file define `PORT = <port_number>`.
 - Create a file `serverConfig.js` in `src/conifg`, with the following code in it:
 
-```const dotenv = require('dotenv');
+``` const dotenv = require('dotenv');
 
 dotenv.config();
 
