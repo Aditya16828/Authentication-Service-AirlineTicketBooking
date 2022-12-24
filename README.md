@@ -42,7 +42,7 @@
 - Set up the basic express server:
   - write the following code in `index.js`
 
- ```
+ ```javascript
  const bodyParser = require("body-parser");
  const express = require("express");
  
@@ -65,7 +65,7 @@ setupAndstartServer();
 - In `.env` file define `PORT = <port_number>`.
 - Create a file `serverConfig.js` in `src/conifg`, with the following code in it:
 
-```
+```javascript
 const dotenv = require('dotenv');
 
 dotenv.config();
