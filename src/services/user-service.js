@@ -14,9 +14,12 @@ class UserService{
             const user = await this.userRepo.create(userData);
             return user;
         } catch (error) {
+            if(error.name == 'SequelizeValidationError'){
+                throw error;
+            }
             console.log("Error in Service Layer");
             console.log(error);
-            throw {error};
+            throw error;
         }
     }
 

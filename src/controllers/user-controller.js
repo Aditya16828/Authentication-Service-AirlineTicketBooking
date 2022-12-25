@@ -15,12 +15,11 @@ const create = async (req, res) => {
             err: {},
         });
     } catch (error) {
-        console.log("Error in Controller");
-        res.status(500).json({
+        res.status(error.statusCode).json({
             data: {},
             success: false,
-            message: "Unable to create Account",
-            err: error,
+            message: error.message,
+            err: error.explanation,
         });
     }
 };
