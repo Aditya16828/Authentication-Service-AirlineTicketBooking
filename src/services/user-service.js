@@ -16,8 +16,8 @@ class UserService{
 
     async createUser(userData){
         try {
-            const user = await this.userRepo.create(userData);
-            return user;
+            const response = await this.userRepo.create(userData);
+            return response;
         } catch (error) {
             if(error.name == 'SequelizeValidationError'){
                 throw error;

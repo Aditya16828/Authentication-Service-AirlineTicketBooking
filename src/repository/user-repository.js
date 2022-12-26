@@ -1,18 +1,66 @@
-const { User, Role } = require("../models/index");
-const {ValidationError} = require("../utils/errorHandlers/ClientErrors/index");
+const { User, Role, AirplaneAuthority } = require("../models/index");
+const {
+    ValidationError,
+    DuplicateEntryError,
+} = require("../utils/errorHandlers/ClientErrors/index");
 
 class UserRepository {
+    async #addAdmin(userid) {
+        const user = await User.findByPk(userid);
+        const role = await Role.findByPk(1);
+        user.addRole(role);
+    }
+
+    async #addNormalUser(userid) {
+        const user = await User.findByPk(userid);
+        const role = await Role.findByPk(2);
+        user.addRole(role);
+    }
+
+    async #addAuthority(userid) {
+        const user = await User.findByPk(userid);
+        const role = await Role.findByPk(3);
+        user.addRole(role);
+    }
+
+    async #find(userAuthority) {
+        const response = await AirplaneAuthority.findOne({
+            where:{
+                domainName: userAuthority
+            }
+        });
+        return response;
+    }
+
     async create(userData) {
         try {
             const user = await User.create(userData);
-            return user;
+            let userEmail = userData.email;
+            
+            let domainName = userEmail.split("@")[1].split(".")[0];
+            
+            let message;
+            if (domainName == "admin") {
+                await this.#addAdmin(user.dataValues.id);
+                message = "Admin Added";
+            } else if (this.#find(domainName)) {
+                await this.#addAuthority(user.dataValues.id);
+                message = "Airplane Authority added";
+            } else {
+                await this.#addNormalUser(user.dataValues.id);
+                message = "Customer added";
+            }
+            
+            return {user, message};
         } catch (error) {
-            if(error.name == 'SequelizeValidationError'){
+            if (error.name == "SequelizeValidationError") {
                 let validationerror = new ValidationError(error);
                 throw validationerror;
             }
+            if (error.name == "SequelizeUniqueConstraintError") {
+                throw new DuplicateEntryError(error);
+            }
             console.log("Error in Repository layer");
-            console.log(error);
             throw error;
         }
     }
@@ -45,7 +93,7 @@ class UserRepository {
         try {
             const user = await User.findOne({
                 where: {
-                    email: userEmail
+                    email: userEmail,
                 },
             });
             return user;
@@ -56,10 +104,10 @@ class UserRepository {
         }
     }
 
-    async isAdmin(userId){
+    async isAdmin(userId) {
         try {
             const user = await User.findByPk(userId);
-            const admin = await Role.findOne({where: {name: "ADMIN"}});
+            const admin = await Role.findByPk(1);
             return user.hasRole(admin);
         } catch (error) {
             console.log("Error in Repository layer, cannot find the role");

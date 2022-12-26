@@ -4,14 +4,14 @@ const userservice = new UserService();
 
 const create = async (req, res) => {
     try {
-        const user = await userservice.createUser({
+        const response = await userservice.createUser({
             email: req.body.email,
-            password: req.body.password,
+            password: req.body.password
         });
         return res.status(201).json({
-            data: user,
+            data: response.user,
             success: true,
-            message: "Successfully created Account",
+            message: response.message,
             err: {},
         });
     } catch (error) {
@@ -83,11 +83,11 @@ const isAuthenticated = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.status(500).json({
+        res.status(error.statusCode).json({
             data: {},
             success: false,
-            message: "Unable to Authenticate Account",
-            err: error,
+            message: error.message,
+            err: error.explanation,
         });
     }
 };
