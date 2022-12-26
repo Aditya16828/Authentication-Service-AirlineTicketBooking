@@ -14,6 +14,11 @@ router.post(
     AuthValidator.validateUserSignup,
     UserController.signin
 );
+router.delete(
+    '/delete',
+    AuthValidator.validateUserSignup,
+    UserController.remove
+);
 router.get(
     '/isAdmin',
     AuthValidator.validateIsAdminrequest,

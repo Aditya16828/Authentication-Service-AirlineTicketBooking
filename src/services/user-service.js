@@ -3,6 +3,11 @@ const bcrypt = require('bcrypt');
 
 const {UserRepository} = require('../repository/index');
 const {JWT_KEY} = require('../config/serverConfig');
+const {
+    PasswordMismatchError, 
+    UserNotFoundError, 
+    TokenVerificationError
+} = require('../utils/errorHandlers/ClientErrors/index');
 
 class UserService{
     constructor(){
@@ -23,14 +28,32 @@ class UserService{
         }
     }
 
-    async deleteUser(userid){
+    async deleteUser(email, password, token){
         try {
-            await this.userRepo.delete(cityid);
+            const user = await this.userRepo.getbyEmail(email);
+            if(!user){
+                let error = new UserNotFoundError();
+                throw error;
+            }
+            const matchPassword = this.checkPassword(password, user.password);
+            
+            if(!matchPassword){
+                let error = new PasswordMismatchError();
+                throw error;
+            }
+
+            let verificationResponse = this.verifyToken(token);
+            if(!verificationResponse){
+                let error = new TokenVerificationError();
+                throw error;
+            }
+
+            await this.userRepo.delete(user.id);
             return true;
         } catch (error){
             console.log("Error in Service Layer");
             console.log(error);
-            throw {error};
+            throw error;
         }
     }
 
@@ -73,22 +96,25 @@ class UserService{
     async signIn(email, password){
         try {
             const user = await this.userRepo.getbyEmail(email);
+            if(!user){
+                let error = new UserNotFoundError();
+                throw error;
+            }
             /**
              * user: {id, email, password, createdAt, updatedAt}
              */
             const matchPassword = this.checkPassword(password, user.password);
             
             if(!matchPassword){
-                console.log("Incorrect password");
-                throw {error: "Incorrect password"};
+                let error = new PasswordMismatchError();
+                throw error;
             }
 
             const newtoken = this.createToken({email: user.email, id: user.id});
             return newtoken;
         } catch (error) {
-            console.log("Error in Service Layer, cannot get the user as per email id");
-            console.log(error);
-            throw {error};
+            console.log("Service Layer Error is :", error);
+            throw error;
         }
     }
 

@@ -1,5 +1,5 @@
 const { User, Role } = require("../models/index");
-const ValidationError = require("../utils/validation-error");
+const {ValidationError} = require("../utils/errorHandlers/ClientErrors/index");
 
 class UserRepository {
     async create(userData) {

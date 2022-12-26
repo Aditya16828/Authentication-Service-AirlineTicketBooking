@@ -26,7 +26,12 @@ const create = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        const response = await userservice.deleteUser(req.params.id);
+        console.log(req.body);
+        const response = await userservice.deleteUser(
+            req.body.email,
+            req.body.password,
+            req.body.token
+        );
         return res.status(200).json({
             data: response,
             success: true,
@@ -35,11 +40,11 @@ const remove = async (req, res) => {
         });
     } catch (error) {
         console.log("Error in Controller");
-        res.status(500).json({
+        res.status(error.statusCode).json({
             data: {},
             success: false,
-            message: "Unable to delete Account",
-            err: error,
+            message: error.message,
+            err: error.explanation
         });
     }
 };
@@ -57,12 +62,11 @@ const signin = async (req, res) => {
             err: {},
         });
     } catch (error) {
-        console.log("Error in Controller");
-        res.status(500).json({
+        res.status(error.statusCode).json({
             data: {},
             success: false,
-            message: "Unable to signin Account",
-            err: error,
+            message: error.message,
+            err: error.explanation
         });
     }
 };
