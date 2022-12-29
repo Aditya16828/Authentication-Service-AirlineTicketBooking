@@ -1,7 +1,5 @@
 # Authentication and Authorization
 
-###### Thanks for bothering me :grin:
-
 - **Authentication**: It is a process using which we can uniquely identify users on our application. This process tells us about who the user is. The general signup, login, logout flow is used to authenticate a user.
 
 - **Authorization**: Its is a process using which we can identify the capabilities of a user,i.e., what a user can do on our application.
