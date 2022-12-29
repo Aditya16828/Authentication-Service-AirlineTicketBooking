@@ -175,3 +175,26 @@ User.beforeCreate((user) => {
         user.password = encryptedPassword;
     });
 ```
+
+- `SALT_ROUNDS` is the integer value that should be stored in `.env` file.
+- When the request will be sent for `signup` the user will be stored with an encrypted password.
+
+## Comparing the password with the encrypted one during `signin`
+
+- On the incoming request for `signin`, we get the user email and the password.
+- Fetch the corresponding `user object` with the email received.
+- Now, add the following snippet in the `user-service.js` in the **UserService** class.
+
+```javascript
+checkPassword(userPassword, encryptedPassword){
+        try {
+            const response = bcrypt.compareSync(userPassword, encryptedPassword);
+            return response;
+        } catch (error) {
+            // Handle the error
+            throw {error};
+        }
+    }
+```
+
+- If `response` is true then the user-password is matched.
