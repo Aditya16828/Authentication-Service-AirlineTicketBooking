@@ -25,7 +25,7 @@ Request Format (to be sent in body) (json):
 - As soon as the user is created it allots a role to the user based upon the _Domain-name_ in email-id. For example,
   - if the email is of the form `xxxxxx@admin.xxx` then it allots an admin role.
   - if the email is of the form `xxxxxx@<AIRPLANE_AUTHORITY>.xxx` then it allots a role of Airplane Authority.
-  - for all other cases, it allots a role of customer to the us(er.
+  - for all other cases, it allots a role of customer to the user.
 
 [For signin](http://localhost:3002/api/v1/signin)  
 Request format (to be sent in body) (json):
