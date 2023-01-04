@@ -51,8 +51,8 @@ class UserService{
             await this.userRepo.delete(user.id);
             return true;
         } catch (error){
-            console.log("Error in Service Layer");
-            console.log(error);
+            // console.log("Error in Service Layer");
+            // console.log(error);
             throw error;
         }
     }
@@ -76,9 +76,11 @@ class UserService{
             const response = jwt.verify(token, JWT_KEY);
             return response;
         } catch (error) {
+            if(error.name == 'JsonWebTokenError'){
+                throw new TokenVerificationError();
+            }
             console.log("Error in verifying Token");
-            console.log(error);
-            throw {error};
+            throw error;
         }
     }
 
@@ -121,18 +123,15 @@ class UserService{
     async AuthenticateUser(token){
         try {
             const response = verifyToken(token);
-            if(!response){
-                throw {error: "Not a valid token"};
-            }
             const user = await this.userRepo.getbyId(response.id);
             if(!user){
-                throw {error: "User not registerred to the corresponding token"}
+                throw new UserNotFoundError();
             }
-            return user.id;
+            return user;
         } catch (error) {
             console.log("Error in Service Layer, cannot get the user id as per token");
             console.log(error);
-            throw {error};
+            throw error;
         }
     }
 

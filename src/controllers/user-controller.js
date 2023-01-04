@@ -26,7 +26,6 @@ const create = async (req, res) => {
 
 const remove = async (req, res) => {
     try {
-        console.log(req.body);
         const response = await userservice.deleteUser(
             req.body.email,
             req.body.password,
