@@ -2,6 +2,7 @@ const { User, Role, AirplaneAuthority } = require("../models/index");
 const {
     ValidationError,
     DuplicateEntryError,
+    UserNotFoundError
 } = require("../utils/errorHandlers/ClientErrors/index");
 
 class UserRepository {
@@ -81,11 +82,17 @@ class UserRepository {
             const user = await User.findByPk(userId, {
                 attributes: ["email", "id"],
             });
-            return user;
+            if(user){
+                return user;
+            } else {
+                const byid = true;
+                const userNotFounderr = new UserNotFoundError(byid);
+                throw userNotFounderr;
+            }
         } catch (error) {
             console.log("Error in fetching the user by id");
             console.log(error);
-            throw { error };
+            throw error;
         }
     }
 
@@ -96,23 +103,34 @@ class UserRepository {
                     email: userEmail,
                 },
             });
-            return user;
+            if(user){
+                return user;
+            } else {
+                const userNotFounderr = new UserNotFoundError();
+                throw userNotFounderr;
+            }
         } catch (error) {
             console.log("Error in Repository layer, cannot find the email id");
             console.log(error);
-            throw { error };
+            throw error;
         }
     }
 
     async isAdmin(userId) {
         try {
             const user = await User.findByPk(userId);
-            const admin = await Role.findByPk(1);
-            return user.hasRole(admin);
+            if(user){
+                const admin = await Role.findByPk(1);
+                return user.hasRole(admin);
+            } else {
+                const byid = true;
+                const userNotFounderr = new UserNotFoundError(byid);
+                throw userNotFounderr;
+            }
         } catch (error) {
             console.log("Error in Repository layer, cannot find the role");
             console.log(error);
-            throw { error };
+            throw error;
         }
     }
 }

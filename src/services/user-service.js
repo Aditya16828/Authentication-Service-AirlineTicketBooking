@@ -143,7 +143,7 @@ class UserService{
         } catch (error){
             console.log("Error in Service Layer, cannot get the user role");
             console.log(error);
-            throw {error};
+            throw error;
         }
     }
 }

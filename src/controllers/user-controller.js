@@ -106,8 +106,8 @@ const isAdmin = async (req, res) => {
         res.status(500).json({
             data: {},
             success: false,
-            message: "Unable to Authenticate User as Admin",
-            err: error,
+            message: error.message,
+            err: error.explanation,
         });
     }
 };
