@@ -43,7 +43,7 @@ class UserRepository {
             if (domainName == "admin") {
                 await this.#addAdmin(user.dataValues.id);
                 message = "Admin Added";
-            } else if (this.#find(domainName)) {
+            } else if ((await this.#find(domainName))) {
                 await this.#addAuthority(user.dataValues.id);
                 message = "Airplane Authority added";
             } else {

@@ -111,7 +111,7 @@ class UserService{
             }
 
             const newtoken = this.createToken({email: user.email, id: user.id});
-            return newtoken;
+            return {token: newtoken, validity: "96 hrs"};
         } catch (error) {
             console.log("Service Layer Error is :", error);
             throw error;
