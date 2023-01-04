@@ -11,7 +11,7 @@ Additional Features:
 
 ## APIs exposed and its corresponding URLS
 
-[For signup](http://localhost:3002/api/v1/signup)
+[For signup](http://localhost:3002/api/v1/signup)  
 Request Format (to be sent in body) (json):
 
 ```json
@@ -27,7 +27,7 @@ Request Format (to be sent in body) (json):
   - if the email is of the form `xxxxxx@<AIRPLANE_AUTHORITY>.xxx` then it allots a role of Airplane Authority.
   - for all other cases, it allots a role of customer to the us(er.
 
-[For signin](http://localhost:3002/api/v1/signin)
+[For signin](http://localhost:3002/api/v1/signin)  
 Request format (to be sent in body) (json):
 
 ```json
@@ -39,7 +39,7 @@ Request format (to be sent in body) (json):
 
 - On successfull signin, a token (valid for 96 hrs or 4 days) is given which the user should save for further use during flight booking or any other activities which may require it.
 
-[For deleting an user](http://localhost:3002/api/v1/delete)
+[For deleting an user](http://localhost:3002/api/v1/delete)  
 Request format (to be sent in body) (json):
 
 ```json
@@ -52,8 +52,7 @@ Request format (to be sent in body) (json):
 
 - Successfull deletion resuslts in removal of allotted user role.
 
-[For checking Admin rights](http://localhost:3002/api/v1/isAdmin)
-
+[For checking Admin rights](http://localhost:3002/api/v1/isAdmin)  
 Request format (to be sent in body) (json):
 
 ```json
