@@ -1,198 +1,65 @@
-# Authentication and Authorization
+# AUTHSERVICE DOCUMENTATION
 
-- **Authentication**: It is a process using which we can uniquely identify users on our application. This process tells us about who the user is. The general signup, login, logout flow is used to authenticate a user.
+This micro-service mainly focusses on the authorization and authentication of the Users that are sending request for _signup_ and _signin_ in the following service.  
 
-- **Authorization**: Its is a process using which we can identify the capabilities of a user,i.e., what a user can do on our application.
+Additional Features:
 
-## How to do Authentication??
-
-- Mobile Number based Authentication. (OTP based, link-to-mobile, etc...)
-- OmniAuth or OAuth. (login via gmail, fb, github, etc...)
-- WebOTP.
-- Token based Authentication. (Done from scratch in this project, otherwise PassportJS APIs can be used for it.)
-
-## Token Based Authentication
-
-- JWT -> Json Web Token
-- To generate the JWT token, we actually use the client credentials.
+- deleting an User account
+- finding whether an User is admin or not
 
 ---
 
-## _STEPS_ for setting up the the Full Authorisation and Authentication Service
+## APIs exposed and its corresponding URLS
 
-### Setting up basic server
-
-- Create the folders:
-  - src/config
-  - src/controllers
-  - src/middlewares
-  - src/repository
-  - src/routes
-  - src/services
-  - src/utils
-- Create the following files in `src/` :
-  - index.js
-  - .env
-  - .gitignore
-- Install the following packages:
-  - express
-  - bodyparser
-  - dotenv
-  - sequelize
-  - sequelize-cli
-  - mysql2
-- Set up the basic express server:
-  - write the following code in `index.js`
-
- ```javascript
- const bodyParser = require("body-parser");
- const express = require("express");
- 
- const { PORT } = require("./config/serverConfig.js");
-
- const setupAndstartServer = async function () {
-    const app = express();
-
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: true }));
-
-  app.listen(PORT, async () => {
-        console.log("Server started at", PORT);
-   });
-  };
-
-setupAndstartServer();
- ```
-
-- In `.env` file define `PORT = <port_number>`.
-- Create a file `serverConfig.js` in `src/conifg`, with the following code in it:
-
-```javascript
-const dotenv = require('dotenv');
-
-dotenv.config();
-
-module.exports = {
-    PORT: process.env.PORT,
-};
-```
-
-- To start the server by running `npm start`, go to the `package.json` file and replace the `"scripts"` key with
+[For signup](http://localhost:3002/api/v1/signup)
+Request Format (to be sent in body) (json):
 
 ```json
-"scripts": {
-    "start": "npx nodemon src/index.js"
-  }
-```
-
-### Setting up DB
-
-- Databases required
-  - User
-  - Role
-  - UserRoles
-
-- Design of the Databases
-
-  - **Users Table _(or User Model)_**
-
-    - id (created by sequelize automatically)
-    - email
-    - password
-    - createdAt (created by sequelize automatically)
-    - updatedAt (created by sequelize automatically)
-  
-  - **Roles Table _(or Role Model)_**
-
-    - id (created by sequelize automatically)
-    - name
-    - createdAt (created by sequelize automatically)
-    - updatedAt (created by sequelize automatically)
-  
-  - **UserRoles Table** : used as a `through` - table to create _MANY-TO-MANY_ associations between tables `Users` and `Roles`.
-
-### Steps
-
-- To create a Database, run the command `npx sequelize db:create`. This will create the following folders in the folder in which the command was run.
-- Move those folders into the `./src/`. Hence, the `./src/` folder structure is
-  
-  - src/config
-  - src/controllers
-  - src/middlewares
-  - src/migrations
-  - src/models
-  - src/repository
-  - src/routes
-  - src/seeders
-  - src/services
-  - src/utils
-
-- Now inside `./src/`, run `npx sequelize model:generate --name <MODEL_NAME> --attributes <A1>:<TYPE> <A2>:<TYPE> ...`.
-- In the `./src/models/` and `./src/migrations/`, 2 files are created with same name as that of the model name. Make the necessary changes.
-- **(For Associations)**
-  - _MANY-TO-MANY_ (Here): In the `user` and `role` model `.js` files, add the code snippet in the
-
-  ```javascript
-  static associate(models){
-
-  }
-  ```
-
-  | `user.js`                         | `role.js`                         |
-  |-----------------------------------|-----------------------------------|
-  |this.belongsToMany(models.Role, {  |this.belongsToMany(models.User, {  |
-  |              through: 'UserRoles' |              through: 'UserRoles' |
-  |          });                      |          });                      |
-
-- In `.env` file, add a property of `DB_SYNC = true` and in `index.js` add
-
-```javascript
-if(process.env.DB_SYNC){
-   db.sequelize.sync({alter: true});
+{
+ "email": <YOUR_EMAILID>,
+ "password": <YOUR_PASSWORD>
 }
 ```
 
-[Note: You can add/remove `DB_SYNC` when sync is required/not required, since being a heavy operation, every time server start will cause the snippet to be executed and may take a lot a time for large DBs]
+- Creates a User with the given email-id and password. The password is encrypted using the npm package [bcrypt](https://www.npmjs.com/package/bcrypt).
+- As soon as the user is created it allots a role to the user based upon the _Domain-name_ in email-id. For example,
+  - if the email is of the form `xxxxxx@admin.xxx` then it allots an admin role.
+  - if the email is of the form `xxxxxx@<AIRPLANE_AUTHORITY>.xxx` then it allots a role of Airplane Authority.
+  - for all other cases, it allots a role of customer to the us(er.
 
-- **(Seeding)**
-  - Run the command `npx sequelize seed:generate --name <NAME_SEEDER_FILE>`, to create a seeder file. (Used to insert some values into DB Tables while server is started {used for development purposes}).
-  - In the `./src/seeder/`, a file is created with name `xxxxxxxxxxxxxx-<NAME_SEEDER_FILE>.js`. Add values into the files as per the instructions in the comments.
-  - Run `npx sequelize db:seed --seed <SEEDER_FILE_NAME>`, to seed the values added inside seeder file.
+[For signin](http://localhost:3002/api/v1/signin)
+Request format (to be sent in body) (json):
 
-## Encrypting Password
-
-**Discussed as per the `USER` Model used here**
-
-- Made use of the package [bcrypt](https://www.npmjs.com/package/bcrypt)
-- Import the package in `./src/models/user.js`, and add the snippet inside the class `User`.
-
-```javascript
-User.beforeCreate((user) => {
-        const salt = bcrypt.genSaltSync(parseInt(SALT_ROUNDS));
-        const encryptedPassword = bcrypt.hashSync(user.password, salt);
-        user.password = encryptedPassword;
-    });
+```json
+{
+ "email": <YOUR_EMAILID>,
+ "password": <YOUR_PASSWORD>
+}
 ```
 
-- `SALT_ROUNDS` is the integer value that should be stored in `.env` file.
-- When the request will be sent for `signup` the user will be stored with an encrypted password.
+- On successfull signin, a token (valid for 96 hrs or 4 days) is given which the user should save for further use during flight booking or any other activities which may require it.
 
-## Comparing the password with the encrypted one during `signin`
+[For deleting an user](http://localhost:3002/api/v1/delete)
+Request format (to be sent in body) (json):
 
-- On the incoming request for `signin`, we get the user email and the password.
-- Fetch the corresponding `user object` with the email received.
-- Now, add the following snippet in the `user-service.js` in the **UserService** class.
-
-```javascript
-checkPassword(userPassword, encryptedPassword){
-        try {
-            const response = bcrypt.compareSync(userPassword, encryptedPassword);
-            return response;
-        } catch (error) {
-            // Handle the error
-            throw {error};
-        }
-    }
+```json
+{
+ "email": <YOUR_EMAILID>,
+ "password": <YOUR_PASSWORD>,
+ "token": <YOUR_TOKEN>
+}
 ```
 
-- If `response` is true then the user-password is matched.
+- Successfull deletion resuslts in removal of allotted user role.
+
+[For checking Admin rights](http://localhost:3002/api/v1/isAdmin)
+
+Request format (to be sent in body) (json):
+
+```json
+{
+    "userId": <INTEGER_USERID> 
+}
+```
+
+- Returns whether the corresponding user is an admin or not.
