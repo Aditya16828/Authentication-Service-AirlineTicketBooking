@@ -83,7 +83,7 @@ const isAuthenticated = async (req, res) => {
     } catch (error) {
         console.log("Error in Controller");
         res.status(error.statusCode).json({
-            data: {},
+            data: error.name,
             success: false,
             message: error.message,
             err: error.explanation,
@@ -103,7 +103,7 @@ const isAdmin = async (req, res) => {
     } catch (error) {
         console.log("Error in Controller");
         res.status(500).json({
-            data: {},
+            data: error.name,
             success: false,
             message: error.message,
             err: error.explanation,
@@ -111,4 +111,25 @@ const isAdmin = async (req, res) => {
     }
 };
 
-module.exports = { create, remove, signin, isAdmin };
+const getUser = async (req, res) => {
+    try {
+        console.log("---------------------------------------------------", req.params.id);
+        const user = await userservice.getUserbyId(req.params.id);
+        return res.status(200).json({
+            data: user,
+            success: true,
+            message: "Fetched User",
+            err: {}
+        })
+    } catch (error) {
+        console.log("Error in Controller");
+        res.status(500).json({
+            data: error.name,
+            success: false,
+            message: error.message,
+            err: error.explanation,
+        });
+    }
+}
+
+module.exports = { create, remove, signin, isAdmin, getUser, isAuthenticated };

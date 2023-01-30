@@ -122,7 +122,7 @@ class UserService{
 
     async AuthenticateUser(token){
         try {
-            const response = verifyToken(token);
+            const response = this.verifyToken(token);
             const user = await this.userRepo.getbyId(response.id);
             if(!user){
                 throw new UserNotFoundError();
@@ -140,6 +140,17 @@ class UserService{
             const response = await this.userRepo.isAdmin(userId);
             return response;
         } catch (error){
+            console.log("Error in Service Layer, cannot get the user role");
+            console.log(error);
+            throw error;
+        }
+    }
+
+    async getUserbyId(userId){
+        try {
+            const response = await this.userRepo.getbyId(userId);
+            return response;
+        } catch (error) {
             console.log("Error in Service Layer, cannot get the user role");
             console.log(error);
             throw error;
